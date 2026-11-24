@@ -1,0 +1,14 @@
+# Environment & local secrets
+.env
+.env.*
+!.env.example
+
+# OS & editor junk
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+
+# Dependency / vendor folders (if Composer or Node is added later)
+vendor/
+node_modules/
