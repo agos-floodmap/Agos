@@ -1,194 +1,155 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AGOS | CDRRMO Flood Monitoring Dashboard</title>
-    <style>
-        :root {
-            --blue: #1d4ed8;
-            --navy: #1e3a8a;
-            --tint: #eff6ff;
-            --white: #ffffff;
-            --bg: #f8fafc;
-            --text: #0f172a;
-            --muted: #64748b;
-            --line: #e2e8f0;
+<?php
+// index.php : Login page
+require_once __DIR__ . '/controllers/AuthController.php';
+
+if (!empty($_SESSION['user'])) {
+    header('Location: view/flood_reports.php');
+    exit;
+}
+
+$error = '';
+$username = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'] ?? '';
+
+    if (!csrfValid($_POST['csrf'] ?? null)) {
+        $error = 'Your session expired. Reload the page and try again.';
+    } else {
+        $result = attemptLogin($username, $_POST['password'] ?? '');
+        if ($result['ok']) {
+            header('Location: view/flood_reports.php');
+            exit;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); }
-        header {
-            background: var(--white); border-bottom: 1px solid var(--line);
-            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
-        }
-        .brand { display: flex; align-items: center; gap: 0.75rem; }
-        .logo {
-            width: 34px; height: 34px; background: var(--blue); color: var(--white);
-            border-radius: 8px; display: grid; place-items: center; font-weight: 700;
-        }
-        .brand h1 { font-size: 1.05rem; color: var(--navy); }
-        .brand span { font-size: 0.78rem; color: var(--muted); display: block; }
-        .pill {
-            background: var(--tint); color: var(--blue); border: 1px solid #dbeafe;
-            padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600;
-        }
-        main { max-width: 1100px; margin: 1.75rem auto; padding: 0 1.25rem; display: grid; gap: 1.25rem; }
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; }
-        .card { background: var(--white); border: 1px solid var(--line); border-radius: 10px; padding: 1.2rem; }
-        .label { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.3rem; }
-        .value { font-size: 1.6rem; font-weight: 700; color: var(--navy); }
-        .sub { font-size: 0.76rem; color: var(--muted); margin-top: 0.2rem; }
-        .grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 1.25rem; }
-        @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
-        .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.9rem; }
-        .head h2 { font-size: 0.98rem; }
-        .head span { font-size: 0.78rem; color: var(--blue); font-weight: 500; }
-        .map-box {
-            background: var(--tint); border: 1px dashed #93c5fd; border-radius: 8px;
-            height: 210px; display: grid; place-items: center; text-align: center;
-            padding: 1rem; margin-bottom: 1.1rem;
-        }
-        .map-box p { color: var(--navy); font-weight: 600; font-size: 0.92rem; }
-        .map-box small { color: var(--muted); font-size: 0.8rem; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
-        th { text-align: left; color: var(--muted); padding: 0.6rem 0.4rem; border-bottom: 1px solid var(--line); }
-        td { padding: 0.65rem 0.4rem; border-bottom: 1px solid var(--line); }
-        tr:last-child td { border-bottom: none; }
-        .tag {
-            background: var(--tint); color: var(--blue); padding: 0.18rem 0.55rem;
-            border-radius: 6px; font-size: 0.76rem; font-weight: 600;
-        }
-        .field { margin-bottom: 0.85rem; }
-        label { display: block; font-size: 0.8rem; font-weight: 500; margin-bottom: 0.3rem; }
-        select, textarea {
-            width: 100%; padding: 0.55rem 0.7rem; border: 1px solid var(--line);
-            border-radius: 8px; font: inherit; font-size: 0.86rem; background: var(--white);
-        }
-        select:focus, textarea:focus { outline: none; border-color: var(--blue); }
-        button {
-            width: 100%; background: var(--blue); color: var(--white); border: none;
-            border-radius: 8px; padding: 0.65rem; font-weight: 600; cursor: pointer;
-        }
-        button:hover { background: var(--navy); }
-        .reports { margin-top: 1.1rem; padding-top: 0.9rem; border-top: 1px solid var(--line); }
-        .item { padding: 0.55rem 0; border-bottom: 1px solid var(--line); font-size: 0.84rem; }
-        .item:last-child { border-bottom: none; }
-        .item strong { color: var(--navy); }
-        .meta { display: block; font-size: 0.75rem; color: var(--muted); margin-top: 0.1rem; }
-    </style>
-</head>
-<body>
-    <header>
-        <div class="brand">
-            <div class="logo">A</div>
+        $error = $result['error'];
+    }
+}
+
+$pageTitle = 'Sign in';
+$bodyClass = 'auth-page';
+$basePath = '';
+$extraScript = <<<'JS'
+const pw = document.getElementById('password');
+const toggle = document.getElementById('togglePw');
+toggle.addEventListener('click', () => {
+  const show = pw.type === 'password';
+  pw.type = show ? 'text' : 'password';
+  toggle.textContent = show ? 'Hide' : 'Show';
+  toggle.setAttribute('aria-pressed', show);
+});
+JS;
+
+require __DIR__ . '/layouts/header.php';
+?>
+
+<main class="auth-shell">
+
+    <!-- Left: brand + context -->
+    <section class="auth-brand" aria-label="About AGOS">
+        <div class="brand-row">
+            <div class="brand-logo" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="2"
+                    stroke-linecap="round">
+                    <path d="M3 8c2.5-2 4.5-2 7 0s4.5 2 7 0 3-1.5 4-1" />
+                    <path d="M3 13c2.5-2 4.5-2 7 0s4.5 2 7 0 3-1.5 4-1" />
+                    <path d="M3 18c2.5-2 4.5-2 7 0s4.5 2 7 0 3-1.5 4-1" />
+                </svg>
+            </div>
             <div>
-                <h1>AGOS Command Overview</h1>
-                <span>CDRRMO Flood Detection &amp; AR Monitoring</span>
+                <div class="brand-name">AGOS <span class="tag">AR Mapping DRRM</span></div>
+                <div class="brand-sub">Barangay Flood Monitoring &amp; Alert Broadcast</div>
             </div>
         </div>
-        <div class="pill">System Active • Live Sync</div>
-    </header>
 
-    <main>
-        <section class="stats">
-            <div class="card">
-                <div class="label">Monitored Barangays</div>
-                <div class="value">12</div>
-                <div class="sub">All sensors &amp; feeds online</div>
-            </div>
-            <div class="card">
-                <div class="label">Highest Flood Reading</div>
-                <div class="value">0.45 m</div>
-                <div class="sub">Ankle-to-knee (Alert Level 1)</div>
-            </div>
-            <div class="card">
-                <div class="label">Verified Citizen Reports</div>
-                <div class="value">4</div>
-                <div class="sub">Submitted via mobile AR today</div>
-            </div>
-            <div class="card">
-                <div class="label">Passable Main Routes</div>
-                <div class="value">9 / 10</div>
-                <div class="sub">1 minor detour advisory active</div>
-            </div>
-        </section>
+        <h1 class="brand-headline">Verify flood reports from the field before residents see them.</h1>
+        <p class="brand-copy">
+            Review reports from volunteers and residents in Baliwag City, confirm water level and
+            road passability, and send one alert to the whole community.
+        </p>
 
-        <section class="grid">
-            <div class="card">
-                <div class="head">
-                    <h2>GIS Flood Hazard &amp; AR Marker View</h2>
-                    <span>Map Container Ready</span>
+        <!-- Preview of a report card, matching the dashboard design -->
+        <div class="preview-card" aria-hidden="true">
+            <div class="preview-head">
+                <span class="dot dot-blue"></span>
+                <span class="preview-title">Report awaiting review</span>
+                <span class="mono-chip">FLD-2026-LPZ01</span>
+            </div>
+            <div class="preview-body">
+                <div class="gauge">
+                    <span class="gauge-mark m3">1.5m</span>
+                    <span class="gauge-mark m2">1.0m</span>
+                    <span class="gauge-water"><span class="gauge-label">Reported: 0.5m</span></span>
+                    <span class="gauge-road">Road bed</span>
                 </div>
-                <div class="map-box">
-                    <div>
-                        <p>Interactive Hazard Map &amp; AR Flood Depth Layer</p>
-                        <small>Placeholder for GIS map integration and live water-level markers</small>
-                    </div>
+                <div class="preview-meta">
+                    <div class="meta-label">Location</div>
+                    <div class="meta-value">Lopez Jaena</div>
+                    <div class="meta-label">Road status</div>
+                    <span class="pill pill-red">Not passable</span>
+                    <div class="meta-label">Sent by</div>
+                    <div class="meta-value">Mother Leader</div>
                 </div>
-                <div class="head">
-                    <h2>Barangay Water Level Status</h2>
-                    <span>Updated just now</span>
-                </div>
-                <table>
-                    <thead>
-                        <tr><th>Barangay</th><th>Est. Depth</th><th>Status</th><th>Route Access</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Poblacion</td><td>0.45 m</td><td><span class="tag">Advisory</span></td><td>Light Vehicles Caution</td></tr>
-                        <tr><td>San Jose</td><td>0.18 m</td><td><span class="tag">Normal</span></td><td>Passable</td></tr>
-                        <tr><td>Bagong Nayon</td><td>0.10 m</td><td><span class="tag">Normal</span></td><td>Passable</td></tr>
-                        <tr><td>Subic</td><td>0.30 m</td><td><span class="tag">Monitoring</span></td><td>Passable</td></tr>
-                    </tbody>
-                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Right: login card -->
+    <section class="auth-panel">
+        <div class="card login-card">
+            <div class="login-head">
+                <div class="crumb">Barangay Operations / Sign in</div>
+                <h2>Sign in to AGOS</h2>
+                <p>For barangay and city personnel. Residents use the mobile app.</p>
             </div>
 
-            <div class="card">
-                <div class="head">
-                    <h2>Issue Verified Alert</h2>
-                    <span>CDRRMO Broadcast</span>
+            <?php if ($error): ?>
+                <div class="alert alert-error" role="alert">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M12 8v5M12 16.5v.01" />
+                    </svg>
+                    <span><?= htmlspecialchars($error) ?></span>
                 </div>
-                <form onsubmit="event.preventDefault();">
-                    <div class="field">
-                        <label for="barangay">Target Area / Barangay</label>
-                        <select id="barangay">
-                            <option>All Monitored Barangays</option>
-                            <option>Poblacion</option>
-                            <option>San Jose</option>
-                            <option>Bagong Nayon</option>
-                            <option>Subic</option>
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label for="level">Alert Level</label>
-                        <select id="level">
-                            <option>Level 1 — Rain &amp; Water Monitoring</option>
-                            <option>Level 2 — Prepare / Route Advisory</option>
-                            <option>Level 3 — Evacuation / Impassable</option>
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label for="message">Advisory Message</label>
-                        <textarea id="message" rows="3" placeholder="Enter short public safety advisory..."></textarea>
-                    </div>
-                    <button type="submit">Publish Alert</button>
-                </form>
+            <?php endif; ?>
 
-                <div class="reports">
-                    <div class="head">
-                        <h2>Recent AR Field Reports</h2>
-                        <span>Queue</span>
-                    </div>
-                    <div class="item">
-                        <strong>Poblacion — Main Intersection</strong>: Measured ~0.45 m via AR overlay.
-                        <span class="meta">Verified • 8 mins ago</span>
-                    </div>
-                    <div class="item">
-                        <strong>Subic — Riverside Road</strong>: Water rising slowly near drainage inlet.
-                        <span class="meta">Pending Review • 19 mins ago</span>
+            <form method="post" action="index.php" class="login-form" novalidate>
+                <input type="hidden" name="csrf" value="<?= csrfToken() ?>">
+
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" autocomplete="username"
+                        value="<?= htmlspecialchars($username) ?>" placeholder="Enter any username" required autofocus>
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+                    <div class="input-wrap">
+                        <input type="password" id="password" name="password" autocomplete="current-password"
+                            placeholder="Enter any password" required>
+                        <button type="button" id="togglePw" class="input-action" aria-pressed="false">Show</button>
                     </div>
                 </div>
+
+                <div class="row-between">
+                    <label class="check">
+                        <input type="checkbox" name="remember" value="1">
+                        <span>Keep me signed in on this device</span>
+                    </label>
+                    <a href="#" class="link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+            </form>
+
+            <div class="login-foot">
+                <span class="status"><span class="dot dot-green"></span> Dispatch sync: Cloud active</span>
+                <span class="mono-chip">Baliwag City</span>
             </div>
-        </section>
-    </main>
-</body>
-</html>
+        </div>
+
+        <p class="auth-note">Authorized personnel only. Sign-ins are logged.</p>
+    </section>
+
+</main>
+
+<?php require __DIR__ . '/layouts/footer.php'; ?>
