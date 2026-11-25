@@ -1,14 +1,7 @@
-
+// assets/app.js : UI interactions only (no backend yet)
 (function () {
     const $ = (s, r = document) => r.querySelector(s);
     const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-
-    // Live clock
-    const clock = $('#clock');
-    if (clock) setInterval(() => {
-        const d = new Date();
-        clock.textContent = d.toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' PHT';
-    }, 1000);
 
     // Toast
     function toast(msg, type = 'ok') {

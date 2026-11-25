@@ -56,8 +56,7 @@ require __DIR__ . '/layouts/header.php';
                 </svg>
             </div>
             <div>
-                <div class="brand-name">AGOS <span class="tag">AR Mapping DRRM</span></div>
-                <div class="brand-sub">Barangay Flood Monitoring &amp; Alert Broadcast</div>
+                <div class="brand-name">AGOS</div>
             </div>
         </div>
 
@@ -97,9 +96,9 @@ require __DIR__ . '/layouts/header.php';
     <section class="auth-panel">
         <div class="card login-card">
             <div class="login-head">
-                <div class="crumb">Barangay Operations / Sign in</div>
+                <div class="crumb">Sign in</div>
                 <h2>Sign in to AGOS</h2>
-                <p>For barangay and city personnel. Residents use the mobile app.</p>
+                <p>For barangay and city personnel.</p>
             </div>
 
             <?php if ($error): ?>
@@ -142,7 +141,6 @@ require __DIR__ . '/layouts/header.php';
             </form>
 
             <div class="login-foot">
-                <span class="status"><span class="dot dot-green"></span> Dispatch sync: Cloud active</span>
                 <span class="mono-chip">Baliwag City</span>
             </div>
         </div>

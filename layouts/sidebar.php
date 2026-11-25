@@ -1,5 +1,5 @@
 <?php
-// layouts/sidebar.php : expects $activePage = flood|map|alerts|records
+
 $activePage = $activePage ?? 'flood';
 $nav = [
     'flood' => ['Flood Reports', 'flood_reports.php', '<path d="M9 4h6l1 2h3v14H5V6h3zM9 13l2 2 4-4"/>', '1'],
@@ -9,23 +9,26 @@ $nav = [
 ];
 ?>
 <aside class="sidebar">
+    <div class="brand-row">
+        <div class="brand-logo sm" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2"
+                stroke-linecap="round">
+                <path d="M3 8c2.5-2 4.5-2 7 0s4.5 2 7 0 3-1.5 4-1" />
+                <path d="M3 13c2.5-2 4.5-2 7 0s4.5 2 7 0 3-1.5 4-1" />
+                <path d="M3 18c2.5-2 4.5-2 7 0s4.5 2 7 0 3-1.5 4-1" />
+            </svg>
+        </div>
+        <div class="brand-name">AGOS</div>
+    </div>
     <div class="side-title">Command navigation</div>
     <nav>
         <?php foreach ($nav as $key => [$label, $href, $icon, $badge]): ?>
             <a href="<?= $href ?>" class="nav-item <?= $key === $activePage ? 'active' : '' ?>">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <?= $icon ?>
-                </svg>
-                <span>
-                    <?= $label ?>
-                </span>
-                <?php if ($key === 'flood'): ?><span class="badge" id="navBadge">
-                        <?= $badge ?>
-                    </span>
-                <?php endif; ?>
-                <?php if ($key === 'alerts'): ?><span class="chip-warn">Push</span>
-                <?php endif; ?>
+                    stroke-linecap="round" stroke-linejoin="round"><?= $icon ?></svg>
+                <span><?= $label ?></span>
+                <?php if ($key === 'flood'): ?><span class="badge" id="navBadge"><?= $badge ?></span><?php endif; ?>
+                <?php if ($key === 'alerts'): ?><span class="chip-warn">Push</span><?php endif; ?>
             </a>
         <?php endforeach; ?>
     </nav>
