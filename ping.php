@@ -8,3 +8,5 @@ echo json_encode([
     'service' => 'agos-web',
     'timestamp' => gmdate('c'),
 ]);
+
+//testing if the database connection is working
