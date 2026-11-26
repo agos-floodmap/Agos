@@ -1,5 +1,5 @@
 <?php
-// models/ReportData.php : static sample data so the UI has something to show.
+
 function sampleReports(): array
 {
     return [
@@ -11,7 +11,6 @@ function sampleReports(): array
     ];
 }
 
-// ---------- CDRRMO sample data (static, no database) ----------
 function cdrrmoReports(): array
 {
     return [

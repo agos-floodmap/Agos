@@ -1,12 +1,7 @@
 <?php
-// controllers/controller.php : all controller logic in one file
-// (login, session guard, CSRF, logout). UI-only build: no database.
 
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
-/* ---------- Login ---------- */
-
-// Any non-empty username + password signs in for now.
 function attemptLogin(string $username, string $password): array
 {
     $username = trim($username);
@@ -23,8 +18,6 @@ function attemptLogin(string $username, string $password): array
     return ['ok' => true];
 }
 
-/* ---------- CSRF ---------- */
-
 function csrfToken(): string
 {
     if (empty($_SESSION['csrf'])) { $_SESSION['csrf'] = bin2hex(random_bytes(32)); }
@@ -36,9 +29,6 @@ function csrfValid(?string $token): bool
     return !empty($_SESSION['csrf']) && is_string($token) && hash_equals($_SESSION['csrf'], $token);
 }
 
-/* ---------- Page guard ---------- */
-// Call at the top of every page in /view.
-// $basePath: '../' for view/, '../../' for view/cdrrmo/ or view/barangay/.
 function requireLogin(string $basePath = '../'): array
 {
     if (empty($_SESSION['user'])) {
@@ -48,8 +38,6 @@ function requireLogin(string $basePath = '../'): array
     return $_SESSION['user'];
 }
 
-/* ---------- Logout ---------- */
-
 function logout(): void
 {
     $_SESSION = [];
@@ -57,8 +45,6 @@ function logout(): void
     header('Location: ../index.php');
     exit;
 }
-
-/* ---------- Direct actions: controllers/controller.php?action=... ---------- */
 
 if (basename($_SERVER['SCRIPT_FILENAME']) === 'controller.php') {
     if (($_GET['action'] ?? '') === 'logout') { logout(); }

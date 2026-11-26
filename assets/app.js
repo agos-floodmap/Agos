@@ -1,9 +1,19 @@
-// assets/app.js : UI interactions only (no backend yet)
 (function () {
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
-  // Toast
+  const topDate = $('#topbarDate');
+  if (topDate) {
+    const updateClock = () => {
+      const now = new Date();
+      const d = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+      const t = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      topDate.textContent = d + ' \u00B7 ' + t;
+    };
+    updateClock();
+    setInterval(updateClock, 15000);
+  }
+
   function toast(msg, type = 'ok') {
     const el = document.createElement('div');
     el.className = 'toast ' + type;
@@ -12,7 +22,6 @@
     setTimeout(() => el.remove(), 3500);
   }
 
-  // Modal
   let onConfirm = null, onAlt = null;
   function openModal({ title, body, confirm = 'Confirm', danger = false, action, alt }) {
     $('#modalTitle').textContent = title;
@@ -28,10 +37,18 @@
     (btn.hidden ? $('[data-action=modal-cancel]') : btn).focus();
   }
   function closeModal() { $('#modal').hidden = true; onConfirm = null; onAlt = null; }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  function closeMenus(exceptId) {
+    ['bellMenu', 'userMenu'].forEach(id => {
+      if (id === exceptId) return;
+      const m = $('#' + id);
+      if (m) m.hidden = true;
+    });
+    const ub = $('[data-action="user-menu"]');
+    if (ub && exceptId !== 'userMenu') ub.setAttribute('aria-expanded', 'false');
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeMenus(); } });
   $('#modal')?.addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
 
-  // Update pending counters
   function clearPending(label) {
     const c = $('#pendingCount'); if (c) c.textContent = 'No reports in review';
     const b = $('#navBadge'); if (b) b.remove();
@@ -40,13 +57,21 @@
     if (box) box.innerHTML = '<div class="decision-text"><strong>' + label + '</strong> You can review it later under Records.</div><a class="btn btn-ghost" href="records.php">Open records</a>';
   }
 
-  // Actions
   document.addEventListener('click', e => {
     const t = e.target.closest('[data-action]');
-    if (!t) { const m = $('#bellMenu'); if (m && !e.target.closest('.menu-wrap')) m.hidden = true; return; }
+    if (!e.target.closest('.menu-wrap')) closeMenus();
+    if (!t) return;
     const a = t.dataset.action;
 
-    if (a === 'bell') { const m = $('#bellMenu'); m.hidden = !m.hidden; }
+    if (a === 'bell') {
+      closeMenus('bellMenu');
+      const m = $('#bellMenu'); if (m) m.hidden = !m.hidden;
+    }
+    if (a === 'user-menu') {
+      closeMenus('userMenu');
+      const m = $('#userMenu');
+      if (m) { m.hidden = !m.hidden; t.setAttribute('aria-expanded', String(!m.hidden)); }
+    }
     if (a === 'modal-cancel') closeModal();
     if (a === 'modal-confirm' && onConfirm) { const fn = onConfirm; closeModal(); fn(); }
     if (a === 'modal-alt' && onAlt) { const fn = onAlt; closeModal(); fn(); }
@@ -75,7 +100,6 @@
     if (a === 'export') toast('Export started. This is a preview, no file is created yet.', 'warn');
   });
 
-  // Hazard map
   $$('[data-pin]').forEach(p => p.addEventListener('click', () => {
     $$('.pin').forEach(x => x.classList.remove('sel')); p.classList.add('sel');
     $('#pinDetail').innerHTML = '<h2>' + p.dataset.name + '</h2><span class="status-tag st-' + p.dataset.pin + '">' + p.dataset.sev + ' severity</span>' +
@@ -86,7 +110,6 @@
     $$('.pin').forEach(p => p.hidden = b.dataset.filterPin !== 'all' && p.dataset.pin !== b.dataset.filterPin);
   }));
 
-  // Alerts form
   $('#alertForm')?.addEventListener('submit', e => {
     e.preventDefault();
     const msg = $('#msg').value.trim();
@@ -102,7 +125,6 @@
     });
   });
 
-  // Records filter
   const rows = $$('#recTable tbody tr');
   function filterRows() {
     const q = ($('#recSearch')?.value || '').toLowerCase(), s = $('#recStatus')?.value || '';

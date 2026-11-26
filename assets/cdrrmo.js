@@ -1,4 +1,3 @@
-// assets/cdrrmo.js : CDRRMO page interactions (UI only, no backend)
 (function () {
   const A = window.AGOS; if (!A) return;
   const $ = (s, r = document) => r.querySelector(s);
@@ -6,7 +5,6 @@
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const kv = pairs => '<dl class="kv">' + pairs.map(([k, v]) => '<dt>' + k + '</dt><dd>' + esc(v) + '</dd>').join('') + '</dl>';
 
-  /* ---------- City flood reports ---------- */
   const list = $('#reportList');
   if (list) {
     let filter = 'all';
@@ -51,7 +49,6 @@
     apply();
   }
 
-  /* ---------- Areas and roads ---------- */
   const ar = $('#arTable');
   if (ar) {
     let cur = null;
@@ -78,7 +75,6 @@
     select($('tbody tr', ar), false);
   }
 
-  /* ---------- Publish city alert ---------- */
   const form = $('#cityAlertForm');
   if (form) {
     const pairs = [['alLoc', 'pvLoc'], ['alDepth', 'pvDepth'], ['alRoad', 'pvRoad']];
@@ -100,7 +96,6 @@
     $('#viewRoute').addEventListener('click', () => A.toast('Safe routes open in the mobile app. This is a preview.', 'warn'));
   }
 
-  /* ---------- City flood records ---------- */
   const rt = $('#rTable');
   if (rt) {
     const rows = $$('tbody tr', rt);

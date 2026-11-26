@@ -1,5 +1,5 @@
 <?php
-// layouts/footer.php
+
 $basePath = $basePath ?? '';
 $withApp  = $withApp ?? false;
 ?>

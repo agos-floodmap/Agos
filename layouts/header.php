@@ -1,6 +1,5 @@
 <?php
-// layouts/header.php
-// Optional vars: $pageTitle, $bodyClass, $basePath ('' at root, '../' in /view), $showTopbar
+
 $pageTitle = $pageTitle ?? 'AGOS';
 $bodyClass = $bodyClass ?? '';
 $basePath  = $basePath ?? '';
@@ -18,29 +17,3 @@ $showTopbar = $showTopbar ?? false;
     <link rel="stylesheet" href="<?= $basePath ?>assets/styles.css?v=<?= filemtime(__DIR__ . "/../assets/styles.css") ?>">
 </head>
 <body class="<?= htmlspecialchars($bodyClass) ?>">
-<?php if ($showTopbar): ?>
-<header class="topbar">
-    <div class="topbar-right">
-        <?php if (!empty($opsLabel)): ?><span class="ops-label"><?= htmlspecialchars($opsLabel) ?></span><?php endif; ?>
-        <div class="user-chip">
-            <div class="avatar"><?= htmlspecialchars($user['initials'] ?? 'BP') ?><span class="dot dot-green"></span></div>
-            <div>
-                <div class="user-name"><?= htmlspecialchars($user['name'] ?? 'User') ?></div>
-                <div class="user-role"><?= htmlspecialchars($user['role'] ?? '') ?></div>
-            </div>
-        </div>
-        <div class="menu-wrap">
-            <button class="icon-btn" data-action="bell" aria-label="Notifications">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/></svg>
-                <span class="notif-dot" id="notifDot"></span>
-            </button>
-            <div class="dropdown" id="bellMenu" hidden>
-                <div class="dropdown-title">Notifications</div>
-                <a href="flood_reports.php">New report from Lopez Jaena, awaiting review</a>
-                <a href="records.php">Pinagbarilan report was rejected earlier today</a>
-            </div>
-        </div>
-        <a class="btn btn-ghost" href="<?= $basePath ?>controllers/controller.php?action=logout">Sign out</a>
-    </div>
-</header>
-<?php endif; ?>

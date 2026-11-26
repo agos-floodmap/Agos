@@ -1,5 +1,5 @@
 <?php
-// index.php : Login page
+
 require_once __DIR__ . '/controllers/controller.php';
 
 if (!empty($_SESSION['user'])) {
@@ -44,7 +44,6 @@ require __DIR__ . '/layouts/header.php';
 
 <main class="auth-shell">
 
-    <!-- Left: brand + context -->
     <section class="auth-brand" aria-label="About AGOS">
         <div class="brand-row">
             <div class="brand-logo" aria-hidden="true">
@@ -64,34 +63,8 @@ require __DIR__ . '/layouts/header.php';
             Review reports from volunteers and residents in Baliwag City, confirm water level and
             road passability, and send one alert to the whole community.
         </p>
-
-        <!-- Preview of a report card, matching the dashboard design -->
-        <div class="preview-card" aria-hidden="true">
-            <div class="preview-head">
-                <span class="dot dot-blue"></span>
-                <span class="preview-title">Report awaiting review</span>
-                <span class="mono-chip">FLD-2026-LPZ01</span>
-            </div>
-            <div class="preview-body">
-                <div class="gauge">
-                    <span class="gauge-mark m3">1.5m</span>
-                    <span class="gauge-mark m2">1.0m</span>
-                    <span class="gauge-water"><span class="gauge-label">Reported: 0.5m</span></span>
-                    <span class="gauge-road">Road bed</span>
-                </div>
-                <div class="preview-meta">
-                    <div class="meta-label">Location</div>
-                    <div class="meta-value">Lopez Jaena</div>
-                    <div class="meta-label">Road status</div>
-                    <span class="pill pill-red">Not passable</span>
-                    <div class="meta-label">Sent by</div>
-                    <div class="meta-value">Mother Leader</div>
-                </div>
-            </div>
-        </div>
     </section>
 
-    <!-- Right: login card -->
     <section class="auth-panel">
         <div class="card login-card">
             <div class="login-head">
