@@ -9,4 +9,4 @@ echo json_encode([
     'timestamp' => gmdate('c'),
 ]);
 
-//testing if the database connection is working
+//testing if the database connection is workingddddddddddddddddddddd
