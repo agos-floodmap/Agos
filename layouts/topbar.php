@@ -9,8 +9,8 @@
             </button>
             <div class="dropdown" id="bellMenu" hidden>
                 <div class="dropdown-title">Notifications</div>
-                <a href="flood_reports.php">New report from Lopez Jaena, awaiting review</a>
-                <a href="records.php">Pinagbarilan report was rejected earlier today</a>
+                <a href="<?= $basePath ?>controllers/cdrrmo/cdrrmo_controller.php?page=flood_reports">New report from Lopez Jaena, awaiting review</a>
+                <a href="<?= $basePath ?>controllers/cdrrmo/cdrrmo_controller.php?page=records">Pinagbarilan report was rejected earlier today</a>
             </div>
         </div>
         <div class="menu-wrap">
@@ -25,7 +25,7 @@
                     <div class="user-dropdown-meta"><?= htmlspecialchars(implode(' · ', array_filter([$user['username'] ?? '', $user['role'] ?? '']))) ?></div>
                 </div>
                 <div class="dropdown-sep"></div>
-                <a class="dropdown-danger" href="<?= $basePath ?>controllers/controller.php?action=logout">Sign out</a>
+                <a class="dropdown-danger" href="<?= $basePath ?>controllers/auth_controller.php?action=logout">Sign out</a>
             </div>
         </div>
     </div>

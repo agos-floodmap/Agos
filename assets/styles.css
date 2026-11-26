@@ -391,9 +391,13 @@ a {
 .login-card {
   width: 100%;
   max-width: 440px;
-  padding: 36px 32px 32px;
+  min-height: 490px;
+  padding: 48px 36px 44px;
   border-radius: 16px;
   box-shadow: 0 12px 32px rgba(15, 42, 61, .06);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .crumb {
@@ -404,13 +408,13 @@ a {
 
 .login-head h2 {
   margin: 0 0 6px;
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: -.01em;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -.02em;
 }
 
 .login-head p {
-  margin: 0 0 28px;
+  margin: 0 0 32px;
   color: var(--ink-soft);
   font-size: 14px;
 }
@@ -418,13 +422,13 @@ a {
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 22px;
 }
 
 .field label {
   display: block;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 6px;
 }
 
@@ -457,27 +461,32 @@ a {
 }
 
 .input-wrap input {
-  padding-right: 70px;
+  padding-right: 44px;
 }
 
 .input-action {
   position: absolute;
-  right: 6px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  font: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
   background: transparent;
   border: 0;
-  padding: 6px 10px;
+  padding: 6px;
   border-radius: 6px;
   cursor: pointer;
 }
 
 .input-action:hover {
-  background: var(--primary-tint);
+  color: var(--ink);
+  background: rgba(15, 42, 61, .06);
+}
+
+.input-action svg[hidden] {
+  display: none;
 }
 
 .row-between {
@@ -512,7 +521,8 @@ a {
 }
 
 .login-card .btn-block {
-  height: 44px;
+  height: 48px;
+  margin-top: 6px;
   font-size: 14.5px;
 }
 
