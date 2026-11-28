@@ -9,4 +9,4 @@ echo json_encode([
     'timestamp' => gmdate('c'),
 ]);
 
-//testing if the database connection is workingddddddddddddddddddddd
+//testing if render auto deploys 
